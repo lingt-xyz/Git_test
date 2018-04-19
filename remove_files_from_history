@@ -28,4 +28,11 @@ $ bfg --delete-files id_{dsa,rsa}  my-repo.git
 $ bfg --strip-blobs-bigger-than 50M  my-repo.git
 
 #Replace all passwords listed in a file (prefix lines 'regex:' or 'glob:' if required) with ***REMOVED*** wherever they occur in your repository :
+#Replace all strings listed in the file "passwords.txt" with ***REMOVED***
 $ bfg --replace-text passwords.txt  my-repo.git
+#examples for the strings in the file:
+PASSWORD1                       # Replace literal string 'PASSWORD1' with '***REMOVED***' (default)
+PASSWORD2==>examplePass         # replace with 'examplePass' instead
+PASSWORD3==>                    # replace with the empty string
+regex:password=\w+==>password=  # Replace, using a regex
+regex:\r(\n)==>$1               # Replace Windows newlines with Unix newlines
