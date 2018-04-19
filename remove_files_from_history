@@ -1,0 +1,31 @@
+#https://rtyley.github.io/bfg-repo-cleaner/
+
+
+#Usage
+
+#First clone a fresh copy of your repo, using the --mirror flag:
+$ git clone --mirror git://example.com/some-big-repo.git
+#This is a bare repo, which means your normal files won't be visible, but it is a full copy of the Git database of your repository, and at this point you should make a backup of it to ensure you don't lose anything.
+
+#Now you can run the BFG to clean your repository up:
+$ java -jar bfg.jar --strip-blobs-bigger-than 100M some-big-repo.git
+
+#The BFG will update your commits and all branches and tags so they are clean, but it doesn't physically delete the unwanted stuff. Examine the repo to make sure your history has been updated, and then use the standard git gc command to strip out the unwanted dirty data, which Git will now recognise as surplus to requirements:
+$ cd some-big-repo.git
+$ git reflog expire --expire=now --all && git gc --prune=now --aggressive
+
+#Finally, once you're happy with the updated state of your repo, push it back up (note that because your clone command used the --mirror flag, this push will update all refs on your remote server):
+$ git push
+
+
+#Examples
+#In all these examples bfg is an alias for java -jar bfg.jar.
+
+#Delete all files named 'id_rsa' or 'id_dsa' :
+$ bfg --delete-files id_{dsa,rsa}  my-repo.git
+
+#Remove all blobs bigger than 50 megabytes :
+$ bfg --strip-blobs-bigger-than 50M  my-repo.git
+
+#Replace all passwords listed in a file (prefix lines 'regex:' or 'glob:' if required) with ***REMOVED*** wherever they occur in your repository :
+$ bfg --replace-text passwords.txt  my-repo.git
